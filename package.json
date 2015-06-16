@@ -1,0 +1,31 @@
+{
+  "name": "bike-me-now",
+  "version": "0.1.0",
+  "description": "Find the closest bike, or the closest dock, in Philly's indego bike sharing system",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/boutell/bike-me-now"
+  },
+  "keywords": [
+    "bike",
+    "sharing",
+    "bicycles"
+  ],
+  "author": "Thomas Boutell tom@punkave.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/boutell/bike-me-now/issues"
+  },
+  "homepage": "https://github.com/boutell/bike-me-now",
+  "dependencies": {
+    "express": "^4.12.4",
+    "geolib": "^2.0.17",
+    "lodash": "^3.9.3",
+    "optimist": "^0.6.1",
+    "request": "^2.58.0"
+  }
+}
