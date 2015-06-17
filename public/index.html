@@ -39,17 +39,25 @@
         text-align: center;
         z-index: 100;
       }
+      footer {
+        margin-top: 40px;
+        text-align: center;
+      }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
   </head>
   <body>
     <nav>
-      <h4><a href="#" data-which="bike">Closest Bike</h4>
-      <h4><a href="#" data-which="dock">Closest Dock</h4>
+      <h4><a href="#" data-which="bike">Closest Bike</a></h4>
+      <h4><a href="#" data-which="dock">Closest Dock</a></h4>
       <div class="spinner"><img src="/images/spinner.gif" /></div>
     </nav>
     <div id="map"></div>
+    <footer>
+      bike-me-now was built by Thomas Boutell and Nick Weber in one wild <a href="https://codeforphilly.org/">CodeForPhilly</a> sprint.
+    </footer>
+
     <script type="text/javascript">
       $(function() {
 
