@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <!-- <link rel="icon" href="favicon.ico" type="image/x-icon"> -->
+    <title>Bike Me Now</title>
+    <style type="text/css">
+      #map {
+        width: 80%;
+        height: 500px;
+        margin: auto;
+      }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+  </head>
+  <body>
+    <h4><a href="#" data-which="bike">Closest Bike</h4>
+    <h4><a href="#" data-which="dock">Closest Dock</h4>
+    <div id="map"></div>
+    <script type="text/javascript">
+      $(function() {
+        $('[data-which]').on('click', function() {
+          var which = $(this).attr('data-which');
+          if (!navigator.geolocation) {
+            return alert('Sorry, your browser does not support fetching your location.');
+          }
+          navigator.geolocation.getCurrentPosition(function(position) {
+            var args = {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+              which: which
+            };
+
+            var map = new google.maps.Map($('#map')[0], {
+              zoom: 13,
+              center: { lat: args.latitude, lng: args.longitude }
+            });
+
+            $.getJSON('/api/find-bike-or-dock', args, function(data) {
+              if (data.status === 'error') {
+                alert('An error occurred. Please try again later.');
+                return;
+              }
+            });
+          });
+          return false;
+        });
+      });
+    </script>
+  </body>
+</html>

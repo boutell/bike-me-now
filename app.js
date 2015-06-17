@@ -2,30 +2,48 @@ var request = require('request');
 var argv = require('optimist').argv;
 var _ = require('lodash');
 var geolib = require('geolib');
-var app = require('express')();
+var express = require('express');
+var app = express();
 
-// app.get('/api/find-bike-or-dock', function(req, res) {
+app.get('/api/find-bike-or-dock', function(req, res) {
+  var which = req.query.which;
+  var latitude = req.query.latitude;
+  var longitude = req.query.longitude;
+  return findBikeOrDock(which, latitude, longitude, function(err, results) {
+    if (err) {
+      return res.send({ status: 'error' });
+    }
+    return res.send({ status: 'ok', docks: results });
+  });
+});
 
-// });
+app.use(express.static(__dirname + '/public'));
 
-// app.listen(3000);
-
-var which = argv._[0];
-var latitude = argv.latitude;
-var longitude = argv.longitude;
-
-return findBikeOrDock(which, latitude, longitude, function(err, docks) {
+return app.listen(3000, function(err) {
   if (err) {
-    console.error('An error occurred.');
-    console.error(err);
+    console.error('Oops, port 3000 not available. Are you running another app?');
     process.exit(1);
-  }
-  if (!docks.length) {
-    console.log('Unfortunately, nothing is available.');
   } else {
-    console.log(_.pluck(docks, 'properties.addressStreet'));
+    console.log('Listening on port 3000.');
   }
 });
+
+// var which = argv._[0];
+// var latitude = argv.latitude;
+// var longitude = argv.longitude;
+
+// return findBikeOrDock(which, latitude, longitude, function(err, docks) {
+//   if (err) {
+//     console.error('An error occurred.');
+//     console.error(err);
+//     process.exit(1);
+//   }
+//   if (!docks.length) {
+//     console.log('Unfortunately, nothing is available.');
+//   } else {
+//     console.log(_.pluck(docks, 'properties.addressStreet'));
+//   }
+// });
 
 function findBikeOrDock(which, latitude, longitude, callback) {
   return request('https://api.phila.gov/bike-share-stations/v1', function(err, response, body) {
