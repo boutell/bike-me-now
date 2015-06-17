@@ -5,22 +5,65 @@
     <!-- <link rel="icon" href="favicon.ico" type="image/x-icon"> -->
     <title>Bike Me Now</title>
     <style type="text/css">
+      body {
+        font-family: Helvetica;
+      }
       #map {
+        clear: left;
         width: 80%;
         height: 500px;
         margin: auto;
+      }
+      nav {
+        padding-bottom: 20px;
+      }
+      nav h4 {
+        width: 30%;
+        margin: 20px 10% 20px 10%;
+        float: left;
+        text-align: center;
+        border-radius: 12px;
+        border: 1px dotted green;
+        padding: 10px 0 10px 0;
+        box-sizing: border-box;
+      }
+      nav h4 a {
+        text-decoration: none;
+        color: green;
+      }
+      .spinner {
+        display: none;
+        position: absolute;
+        top: 100px;
+        width: 100%;
+        text-align: center;
+        z-index: 100;
       }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
   </head>
   <body>
-    <h4><a href="#" data-which="bike">Closest Bike</h4>
-    <h4><a href="#" data-which="dock">Closest Dock</h4>
+    <nav>
+      <h4><a href="#" data-which="bike">Closest Bike</h4>
+      <h4><a href="#" data-which="dock">Closest Dock</h4>
+      <div class="spinner"><img src="/images/spinner.gif" /></div>
+    </nav>
     <div id="map"></div>
     <script type="text/javascript">
       $(function() {
+
+        var $spinner = $('.spinner');
+
+        var map = new google.maps.Map($('#map')[0], {
+          zoom: 13,
+          center: { lat: 39.9522, lng: -75.1639 }
+        });
+
+        var markers = [];
+
         $('[data-which]').on('click', function() {
+          $spinner.show();
           var which = $(this).attr('data-which');
           if (!navigator.geolocation) {
             return alert('Sorry, your browser does not support fetching your location.');
@@ -32,16 +75,59 @@
               which: which
             };
 
-            var map = new google.maps.Map($('#map')[0], {
-              zoom: 13,
-              center: { lat: args.latitude, lng: args.longitude }
-            });
-
             $.getJSON('/api/find-bike-or-dock', args, function(data) {
               if (data.status === 'error') {
+                $spinner.hide();
                 alert('An error occurred. Please try again later.');
                 return;
               }
+              map.setCenter({ lat: args.latitude, lng: args.longitude });
+              map.setZoom(15);
+
+              $.each(markers, function(i, marker) {
+                marker.setMap(null);
+              });
+
+              markers = [];
+              markers.push(new google.maps.Marker({
+                position: new google.maps.LatLng(args.latitude, args.longitude),
+                map: map,
+                icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+              }));
+              $.each(data.docks, function(i, dock) {
+                markers.push(new google.maps.Marker({
+                  position: new google.maps.LatLng(dock.geometry.coordinates[1], dock.geometry.coordinates[0]),
+                  map: map,
+                  icon: colorIcon(dock),
+                  title: dock.properties.addressStreet
+                }));
+              });
+
+              var important = markers.slice(0, 4);
+              var boundary = new google.maps.LatLngBounds();
+              $.each(important, function(i, marker) {
+                boundary.extend(marker.position);
+              });
+              map.fitBounds(boundary);
+
+              function colorIcon(dock) {
+                var basis;
+                if (which === 'dock') {
+                  basis = dock.properties.docksAvailable;
+                } else {
+                  basis = dock.properties.bikesAvailable;
+                }
+                var color;
+                if (basis < 3) {
+                  color = 'red';
+                } else if (basis < 6) {
+                  color = 'yellow';
+                } else {
+                  color = 'green';
+                }
+                return 'http://maps.google.com/mapfiles/ms/icons/' + color + '-dot.png'
+              }
+              $spinner.hide();
             });
           });
           return false;
