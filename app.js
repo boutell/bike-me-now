@@ -3,6 +3,7 @@ var argv = require('optimist').argv;
 var _ = require('lodash');
 var geolib = require('geolib');
 var express = require('express');
+var fs = require('fs');
 var app = express();
 
 app.get('/api/find-bike-or-dock', function(req, res) {
@@ -19,12 +20,19 @@ app.get('/api/find-bike-or-dock', function(req, res) {
 
 app.use(express.static(__dirname + '/public'));
 
-return app.listen(3000, function(err) {
+var port = 3000;
+try {
+  port = parseInt(fs.readFileSync('data/port'));
+} catch (e) {
+  console.log('no port file, defaulting to port 3000');
+}
+
+return app.listen(port, function(err) {
   if (err) {
-    console.error('Oops, port 3000 not available. Are you running another app?');
+    console.error('Oops, port ' + port + ' not available. Are you running another app?');
     process.exit(1);
   } else {
-    console.log('Listening on port 3000.');
+    console.log('Listening on port ' + port + '.');
   }
 });
 
