@@ -11,7 +11,8 @@ var app = express();
 var allDocks;
 
 // every 5 minutes to avoid irritating the API gods
-frequently(cacheLatestData, 5 * 60000);
+
+frequently(cacheLatestData, 5 * 60000).now();
 
 app.get('/api/find-bike-or-dock', function(req, res) {
   var which = req.query.which;
@@ -115,7 +116,6 @@ function geoToLatLong(geo) {
 
 function cacheLatestData(callback) {
   return request('https://api.phila.gov/bike-share-stations/v1', function(err, response, body) {
-
     if (err) {
       console.error('WARNING: API failure', err);
       // try again soon
