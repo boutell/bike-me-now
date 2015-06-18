@@ -10,7 +10,8 @@ var app = express();
 
 var allDocks;
 
-frequently(cacheLatestData, 10000);
+// every 5 minutes to avoid irritating the API gods
+frequently(cacheLatestData, 5 * 60000);
 
 app.get('/api/find-bike-or-dock', function(req, res) {
   var which = req.query.which;
