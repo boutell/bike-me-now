@@ -4,7 +4,13 @@ var _ = require('lodash');
 var geolib = require('geolib');
 var express = require('express');
 var fs = require('fs');
+var frequently = require('frequently');
+
 var app = express();
+
+var allDocks;
+
+frequently(cacheLatestData, 10000);
 
 app.get('/api/find-bike-or-dock', function(req, res) {
   var which = req.query.which;
@@ -54,34 +60,31 @@ return app.listen(port, function(err) {
 // });
 
 function findBikeOrDock(which, latitude, longitude, callback) {
-  return request('https://api.phila.gov/bike-share-stations/v1', function(err, response, body) {
 
-    if (err) {
-      return callback(err);
+  if (!allDocks) {
+    // We are still booting up and haven't cached any data yet.
+    // Try again in 5 seconds
+    setTimeout(function() {
+      return findBikeOrDock(which, latitude, longitude, callback);
+    }, 5000);
+    return;
+  }
+
+  var docks = _.filter(allDocks, suitable);
+
+  docks.sort(function(a, b) {
+    var distanceA = distanceTo(a);
+    var distanceB = distanceTo(b);
+    if (distanceA < distanceB) {
+      return -1;
+    } else if (distanceA > distanceB) {
+      return 1;
+    } else {
+      return 0;
     }
-
-    if (response.statusCode !== 200) {
-      return callback(new Error(response.statusCode));
-    }
-
-    var docks = JSON.parse(body).features;
-
-    docks = _.filter(docks, suitable);
-
-    docks.sort(function(a, b) {
-      var distanceA = distanceTo(a);
-      var distanceB = distanceTo(b);
-      if (distanceA < distanceB) {
-        return -1;
-      } else if (distanceA > distanceB) {
-        return 1;
-      } else {
-        return 0;
-      }
-    });
-
-    return callback(null, docks);
   });
+
+  return callback(null, docks);
 
   function suitable(dock) {
     if (which === 'dock') {
@@ -107,4 +110,23 @@ function geoToLatLong(geo) {
     latitude: geo.coordinates[1],
     longitude: geo.coordinates[0]
   };
+}
+
+function cacheLatestData(callback) {
+  return request('https://api.phila.gov/bike-share-stations/v1', function(err, response, body) {
+
+    if (err) {
+      console.error('WARNING: API failure', err);
+      // try again soon
+      return callback();
+    }
+
+    if (response.statusCode !== 200) {
+      console.error('WARNING: API failure', response.statusCode);
+      // try again soon
+      return callback();
+    }
+    allDocks = JSON.parse(body).features;
+    return callback();
+  });
 }

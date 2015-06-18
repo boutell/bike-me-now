@@ -23,6 +23,7 @@
   "homepage": "https://github.com/boutell/bike-me-now",
   "dependencies": {
     "express": "^4.12.4",
+    "frequently": "^0.1.1",
     "geolib": "^2.0.17",
     "lodash": "^3.9.3",
     "optimist": "^0.6.1",
