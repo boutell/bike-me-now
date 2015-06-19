@@ -48,8 +48,8 @@
         padding-bottom: 20px;
       }
       nav h4 {
-        width: 30%;
-        margin: 20px 10% 20px 10%;
+        width: 35%;
+        margin: 20px 5% 20px 10%;
         float: left;
         text-align: center;
         border-radius: 12px;
@@ -61,6 +61,9 @@
       nav h4 a {
         text-decoration: none;
         color: inherit;
+      }
+      nav h4.two {
+        margin: 20px 10% 20px 5%;
       }
       .spinner {
         display: none;
@@ -87,7 +90,7 @@
   <body>
     <nav>
       <a href="#" data-which="bike"><h4>Closest Bike</h4></a>
-      <a href="#" data-which="dock"><h4>Closest Dock</h4></a>
+      <a href="#" data-which="dock"><h4 class="two">Closest Dock</h4></a>
       <div class="spinner"><img src="/images/spinner.gif" /></div>
     </nav>
     <div class="map-box">
