@@ -9,11 +9,40 @@
       body {
         font-family: Helvetica;
       }
-      #map {
+      .map-box {
         clear: left;
         width: 80%;
         height: 400px;
         margin: auto;
+        position: relative;
+      }
+      #map {
+        width: 100%;
+        height: 100%;
+        opacity: 0.5;
+        position: absolute;
+      }
+      .instructions {
+        width: 80%;
+        top: 20%;
+        left: 10%;
+        z-index: 100;
+        position: absolute;
+        background-color: white;
+        box-sizing: border-box;
+        padding: 12px;
+        text-align: center;
+        color: black;
+        border-radius: 12px;
+        font-size: 20px;
+        line-height: 1.5;
+        border: 1px solid #ccc;
+      }
+      .map-box.active #map {
+        opacity: 1.0;
+      }
+      .map-box.active .instructions {
+        display: none;
       }
       nav {
         padding-bottom: 20px;
@@ -24,10 +53,10 @@
         float: left;
         text-align: center;
         border-radius: 12px;
-        background-color: #afa;
+        background-color: #3a8;
         padding: 12px 0 10px 0;
         box-sizing: border-box;
-        color: #224;
+        color: white;
       }
       nav h4 a {
         text-decoration: none;
@@ -61,17 +90,25 @@
       <a href="#" data-which="dock"><h4>Closest Dock</h4></a>
       <div class="spinner"><img src="/images/spinner.gif" /></div>
     </nav>
-    <div id="map"></div>
+    <div class="map-box">
+      <div id="map"></div>
+      <div class="instructions">
+        Tap "Closest Bike" to get started!
+      </div>
+    </div>
     <footer>
       <h1>bike-me-now</h1>
       <h2>Find available Indego bikes and docks near you. Updates in real time.</h2>
-      bike-me-now was built by <a href="http://twitter.com/boutell">Thomas Boutell</a> and Nick Weber in one wild <a href="https://codeforphilly.org/">CodeForPhilly</a> sprint. It is <a href="https://github.com/boutell/bike-me-now">open source</a>.<br /><br />
-      Idea: <a href="http://twitter.com/titlecharacter">Ben Novack</a>
+      <p>Tip: add it the home screen of your smartphone.</p>
+      <p>bike-me-now was built by <a href="http://twitter.com/boutell">Thomas Boutell</a> and Nick Weber in one wild <a href="https://codeforphilly.org/">CodeForPhilly</a> sprint. It is <a href="https://github.com/boutell/bike-me-now">open source</a>.</p>
+      <p>
+      Idea: <a href="http://twitter.com/titlecharacter">Ben Novack</a></p>
     </footer>
 
     <script type="text/javascript">
       $(function() {
 
+        var $mapBox = $('.map-box');
         var $spinner = $('.spinner');
 
         var map = new google.maps.Map($('#map')[0], {
@@ -82,6 +119,7 @@
         var markers = [];
 
         $('[data-which]').on('click', function() {
+          $mapBox.addClass('active');
           $spinner.show();
           var which = $(this).attr('data-which');
           if (!navigator.geolocation) {
