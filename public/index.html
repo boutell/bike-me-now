@@ -111,6 +111,16 @@
 
     <script type="text/javascript">
       $(function() {
+        // http://www.surinderbhomra.com/Blog/Post/2015/01/03/Detecting-Facebook-In-App-Browser
+        if (navigator.appVersion.indexOf("FBAN") > -1)
+        {
+          if (navigator.appVersion.indexOf("Android"))
+          {
+            alert("Facebook's built-in browser doesn't support finding the closest bike. Please choose \"Open in Chrome\" from the menu in the upper right corner.");
+          } else {
+            alert("Facebook's built-in browser doesn't support finding the closest bike. Please choose \"Open in Safari\" from the sharing menu near upper right.");
+          }
+        }
 
         var $mapBox = $('.map-box');
         var $spinner = $('.spinner');
