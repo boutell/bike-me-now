@@ -121,6 +121,15 @@
             alert("Facebook's built-in browser doesn't support finding the closest bike. Please choose \"Open in Safari\" from the sharing menu near upper right.");
           }
         }
+        if (navigator.appVersion.indexOf("Twitter") > -1)
+        {
+          if (navigator.appVersion.indexOf("Android"))
+          {
+            alert("Twitter's built-in browser doesn't support finding the closest bike. Please choose \"Open in Browser\" from the menu in the upper right corner.");
+          } else {
+            alert("Twitter's built-in browser doesn't support finding the closest bike. Please choose \"Open in Safari\" from the sharing menu near upper right.");
+          }
+        }
 
         var $mapBox = $('.map-box');
         var $spinner = $('.spinner');
