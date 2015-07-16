@@ -44,23 +44,6 @@ return app.listen(port, function(err) {
   }
 });
 
-// var which = argv._[0];
-// var latitude = argv.latitude;
-// var longitude = argv.longitude;
-
-// return findBikeOrDock(which, latitude, longitude, function(err, docks) {
-//   if (err) {
-//     console.error('An error occurred.');
-//     console.error(err);
-//     process.exit(1);
-//   }
-//   if (!docks.length) {
-//     console.log('Unfortunately, nothing is available.');
-//   } else {
-//     console.log(_.pluck(docks, 'properties.addressStreet'));
-//   }
-// });
-
 function findBikeOrDock(which, latitude, longitude, callback) {
 
   if (!allDocks) {
