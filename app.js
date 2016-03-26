@@ -30,7 +30,7 @@ app.use(express.static(__dirname + '/public'));
 
 var port = 3000;
 try {
-  port = parseInt(fs.readFileSync('data/port'));
+  port = parseInt(fs.readFileSync(__dirname + '/data/port'));
 } catch (e) {
   console.log('no port file, defaulting to port 3000');
 }
